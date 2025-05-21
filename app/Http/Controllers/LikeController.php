@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewNotification;
 use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -30,6 +31,11 @@ class LikeController extends Controller
                 'user_id'=>$user->id
             ]);
             $post->increment('likes_count');
+            broadcast(new NewNotification($post->user_id,[
+                'message'=> $user->username . ' liked your post',
+                'type'=> 'like',
+                'post_id'=>$post->post_id
+            ]));
             return ['Liked'=> true];
 
         });
@@ -41,7 +47,7 @@ class LikeController extends Controller
     public function toggleLikeToComment(Request $request, Comment $comment)
     {
         $result = DB::transaction(function () use ($request, $comment){
-            $user = auth()->user();
+            $user  = auth()->user();
             if(!$user){
                 return response('Unauthorized',401);
             }
@@ -58,9 +64,16 @@ class LikeController extends Controller
                 'user_id'=>$user->id
             ]);
             $comment->increment('likes_count');
+            broadcast(new NewNotification($comment->user_id, [
+                'message' => $user->username . ' liked your post.',
+                'type' => 'like',
+                'comment_id' => $comment->id,
+            ]));
+            \Log::info("Broadcasting CommentAdded on post {$comment->id} by user {$user->id}");
             return ['Liked'=> true];
 
         });
+
         return response($result);
     }
 }

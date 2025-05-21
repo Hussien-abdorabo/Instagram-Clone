@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewNotification;
 use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -28,6 +29,11 @@ class CommentController extends Controller
         ]);
         $post->increment('comments_count');
         $post->save();
+        broadcast(new NewNotification($post->user_id,[
+            'message'=>$user->username .' commented on your post',
+            'type'=>'comment',
+            'post_id'=>$post->id
+        ]));
         return response()->json(['comment' => $comment], 201);
     }
 
