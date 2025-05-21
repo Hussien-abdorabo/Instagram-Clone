@@ -15,4 +15,8 @@ class Profile extends Model
         'bio',
         'profile_pic',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
