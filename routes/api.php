@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('update/{profile}',[ProfileController::class,'update']);
         Route::get('show/{profile}',[ProfileController::class,'show']);
     });
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+   Route::prefix('posts')->group(function () {
+       Route::post('create',[PostController::class,'store']);
+       Route::get('list',[PostController::class,'index']);
+       Route::get('show/{post}',[PostController::class,'show']);
+       Route::post('update/{post}',[PostController::class,'update']);
+       Route::delete('delete/{post}',[PostController::class,'destroy']);
+   });
 });
 
 
