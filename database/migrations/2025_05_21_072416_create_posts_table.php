@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('profile_id')->constrained('profiles')->cascadeOnDelete();
             $table->string('post_image');
             $table->text('caption')->nullable();
+            $table->unsignedInteger('likes_count')->default(0);
+            $table->unsignedInteger('comments_count')->default(0);
             $table->timestamps();
         });
     }
