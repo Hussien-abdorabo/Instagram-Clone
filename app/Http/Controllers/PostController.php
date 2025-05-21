@@ -54,10 +54,11 @@ class PostController extends Controller
     public function show(Post $post)
     {
         $user = auth()->user();
-        if (!$user || $user->id !== $post->user_id){
+        if (!$user){
             return response()->json('unauthorized', 401);
         }
-        $post = Post::where('id',$post->id)->first();
+        $post = Post::withCount('likes','comments')->find($post)
+                        ->load(['user','likes','comments']);
         return response()->json(['view'=>$post],status: 200);
 
     }
