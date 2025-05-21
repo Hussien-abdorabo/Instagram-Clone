@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
@@ -30,5 +32,20 @@ Route::middleware('auth:sanctum')->group(function () {
    });
 });
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('comments')->group(function () {
+        Route::post('create/{post}',[CommentController::class,'addComment']);
+        Route::get('list/{post}',[CommentController::class,'getComments']);
+        Route::patch('update/{comment}',[CommentController::class,'updateComment']);
+        Route::delete('delete/{comment}',[CommentController::class,'deleteComment']);
+    });
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('likes')->group(function () {
+        Route::post('create/like/post/{post}',[LikeController::class,'toggleLikeToPost']);
+        Route::post('create/like/comment/{comment}',[LikeController::class,'toggleLikeToComment']);
+    });
+});
 
 
