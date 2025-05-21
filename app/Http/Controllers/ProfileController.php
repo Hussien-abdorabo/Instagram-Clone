@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -18,9 +19,9 @@ class ProfileController extends Controller
         if(!$auth || $auth->id !== $profile->user_id){
             return response()->json('Unauthorized', 401);
         }
-        $view = Profile::find($profile->user_id);
-//        dd($view);
-        return response()->json($view);
+        $view = Profile::where('id',$profile->user_id)->first();
+        $posts = Post::all()->where('profile_id',$profile->user_id);
+        return response()->json(['profile'=>$view,'posts'=>$posts],status: 200);
     }
 
     /**

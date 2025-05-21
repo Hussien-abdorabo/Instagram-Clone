@@ -2,25 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use SebastianBergmann\CodeCoverage\Report\Xml\Project;
 
-class Profile extends Model
+class Post extends Model
 {
-
-
     protected $fillable = [
         'user_id',
-        'username',
-        'bio',
-        'profile_pic',
+        'profile_id',
+        'post_image',
+        'caption',
     ];
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-    public function post()
+    public function profile()
     {
-        return $this->hasMany(Post::class);
+        return $this->belongsTo(Profile::class);
     }
+
 }
