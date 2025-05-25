@@ -37,6 +37,7 @@ class ProfileController extends Controller
 
         $validated = Validator::make($request->all(), [
             "username" => "nullable|unique:users,username,{$user->id}|string|max:255|min:6",
+            "name" => "nullable|string|max:255|min:6",
             "bio" => "nullable|string|max:255|min:6",
             "profile_pic" => "nullable|mimes:jpeg,png,jpg|max:2048",
         ]);
@@ -49,6 +50,9 @@ class ProfileController extends Controller
         if ($request->filled('username')) {
             $user->username = $request->username;
             $user->save();
+        }
+        if($request->filled('name')){
+            $profile->name  = $request->name;
         }
 
 
