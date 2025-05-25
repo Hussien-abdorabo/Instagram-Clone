@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FeedController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
@@ -47,5 +49,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('create/like/comment/{comment}',[LikeController::class,'toggleLikeToComment']);
     });
 });
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/follow/{user}', [FollowController::class, 'Follow']);
+    Route::get('/followers/{user}', [FollowController::class, 'MyFollowers']);
+    Route::get('/me/following', [FollowController::class, 'MyFollowing']);
+    Route::get('/feed/for-you', [FeedController::class, 'PersonalizedFeed']);
+});
+
 
 
