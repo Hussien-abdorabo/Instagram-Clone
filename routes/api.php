@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MessageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +58,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me/following', [FollowController::class, 'MyFollowing']);
     Route::get('/feed/for-you', [FeedController::class, 'PersonalizedFeed']);
 });
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/conversations', [ConversationController::class, 'store']);
+    Route::get('/conversations', [ConversationController::class, 'index']);
+
+    Route::post('/conversations/{conversation}/messages', [MessageController::class, 'send']);
+    Route::get('/conversations/{conversation}/messages', [MessageController::class, 'fetch']);
+});
+
+
+
+
+
 
 
 
