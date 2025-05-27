@@ -13,3 +13,7 @@ window.Echo = new Echo({
     wssPort: import.meta.env.VITE_PUSHER_PORT,
     enabledTransports: ["ws", "wss"],
 });
+// resources/js/echo-setup.js
+Echo.connector.socket.on('disconnect', () => {
+    showToast('Connection lost - reconnecting...');
+});

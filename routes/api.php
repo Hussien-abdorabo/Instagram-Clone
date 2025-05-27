@@ -9,6 +9,7 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -66,6 +67,9 @@ Route::middleware(['auth:sanctum','throttle:chat'])->group(function () {
     Route::post('/conversations/{conversation}/messages/', [MessageController::class, 'send']);
     Route::get('/conversations/{conversation}/messages', [MessageController::class, 'fetch']);
     Route::post('/conversations/{conversation}/read', [MessageController::class, 'markAsRead']);
+});
+Route::middleware(['auth:sanctum','throttle:api'])->group(function () {
+   Route::post('/search-users', [UserController::class, 'search']);
 });
 
 
