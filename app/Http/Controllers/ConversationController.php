@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Models\Conversation;
+use Illuminate\Support\Facades\DB;
 
 class ConversationController
 {
@@ -11,14 +13,32 @@ class ConversationController
     {
         $userId = auth()->id();
 
+        // 1. Get all conversations for the user
         $conversations = Conversation::where('user_one_id', $userId)
             ->orWhere('user_two_id', $userId)
-            ->with(['userOne', 'userTwo'])
-            ->latest()
+            ->with(['messages' => function ($q) {
+                $q->latest()->limit(1); // Only latest message
+            }])
             ->get();
 
+        // ✅ 2. Calculate unread counts
+        $unreadCounts = DB::table('messages')
+            ->select('conversation_id', DB::raw('COUNT(*) as unread'))
+            ->where('receiver_id', $userId)
+            ->where('is_read', false)
+            ->groupBy('conversation_id')
+            ->pluck('unread', 'conversation_id');
+
+        // ✅ 3. Attach unread counts to each conversation
+        $conversations->map(function ($conv) use ($unreadCounts) {
+            $conv->unread_count = $unreadCounts[$conv->id] ?? 0;
+            return $conv;
+        });
+
+        // ✅ 4. Return response
         return response()->json($conversations);
     }
+
 
     public function store(Request $request)
     {
