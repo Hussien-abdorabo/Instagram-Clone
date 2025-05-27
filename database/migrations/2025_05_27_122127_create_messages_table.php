@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('content');
             $table->string('attachment')->nullable();
             $table->boolean('is_read')->default(false);
+            $table->index(['conversation_id', 'created_at']);
             $table->timestamps();
         });
     }

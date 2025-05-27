@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Models\Conversation;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ConversationController
@@ -20,6 +21,10 @@ class ConversationController
                 $q->latest()->limit(1); // Only latest message
             }])
             ->get();
+        // When fetching conversations
+        $conversation = Cache::remember("user_{$userId}_conversations", 3600, function() use ($userId) {
+            return Conversation::with('messages')->latest()->whereHas('users', fn($q) => $q->where('user_id', $userId))->get();
+        });
 
         // ✅ 2. Calculate unread counts
         $unreadCounts = DB::table('messages')

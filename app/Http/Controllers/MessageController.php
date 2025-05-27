@@ -18,7 +18,7 @@ class MessageController
         }
         $validated = $request->validate([
             'content' => 'required|string',
-            'attachment' => 'nullable|file|mimes:pdf,doc,docx,txt,jpg,jpeg,png|max:2048',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,txt,jpg,jpeg,png|max:10240',
         ]);
         if($user->id ==$request->receiver_id ){
             return  response()->json(['error' => 'you can\'t send message to your self'], 401);
@@ -30,8 +30,12 @@ class MessageController
             'sender_id' => $user->id,
             'receiver_id' => $receiverId,
             'content' => $validated['content'],
-            'attachment' => $validated['attachment'],
         ));
+        if($request->hasFile('attachment')){
+            $attachment = $request->file('attachment')->store('attachments', 'public');
+            $message->attachment = $attachment;
+        }
+
         broadcast(new MessageSent($message))->toOthers();
 
         return response()->json(['message' => $message], 201);
@@ -45,7 +49,8 @@ class MessageController
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $messages = $conversation->messages()->with('sender')->orderBy('created_at')->get();
+        $messages = $conversation->messages()->with('sender')
+            ->orderBy('created_at')->get();
 
         return response()->json($messages);
     }

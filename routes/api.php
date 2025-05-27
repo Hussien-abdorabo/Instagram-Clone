@@ -19,14 +19,14 @@ Route::prefix('auth')->group(function () {
         Route::post('logout',[AuthController::class,'logout']);
     });
 });
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum','throttle:api'])->group(function () {
     Route::prefix('profile')->group(function () {
         Route::post('update/{profile}',[ProfileController::class,'update']);
         Route::get('show/{profile}',[ProfileController::class,'show']);
     });
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum','throttle:api'])->group(function () {
    Route::prefix('posts')->group(function () {
        Route::post('create',[PostController::class,'store']);
        Route::get('list',[PostController::class,'index']);
@@ -36,7 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
    });
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum','throttle:api'])->group(function () {
     Route::prefix('comments')->group(function () {
         Route::post('create/{post}',[CommentController::class,'addComment']);
         Route::get('list/{post}',[CommentController::class,'getComments']);
@@ -45,21 +45,21 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum','throttle:api'])->group(function () {
     Route::prefix('likes')->group(function () {
         Route::post('create/like/post/{post}',[LikeController::class,'toggleLikeToPost']);
         Route::post('create/like/comment/{comment}',[LikeController::class,'toggleLikeToComment']);
     });
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum','throttle:follow'])->group(function () {
     Route::post('/follow/{user}', [FollowController::class, 'Follow']);
     Route::get('/followers/{user}', [FollowController::class, 'MyFollowers']);
     Route::get('/me/following', [FollowController::class, 'MyFollowing']);
     Route::get('/feed/for-you', [FeedController::class, 'PersonalizedFeed']);
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum','throttle:chat'])->group(function () {
     Route::post('/conversations', [ConversationController::class, 'store']);
     Route::get('/conversations', [ConversationController::class, 'index']);
 
