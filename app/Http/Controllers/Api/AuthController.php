@@ -86,7 +86,7 @@ class AuthController extends Controller
 
     public function login(Request $request){
         $validated = Validator::make($request->all(), [
-            "username" => "required|exists:users|alpha_dash|max:255|min:6",
+            "username" => "required|exists:users|max:255|min:6",
             "password" => "required|min:6|max:255",
         ]);
         if ($validated->fails()) {
